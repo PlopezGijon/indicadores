@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Cuadro de Mando del Servicio de Comunicación y Nuevos Proyectos</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="main.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="main.js"></script>
+  <script src="graficas.json"></script>
+
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <script>
+      google.charts.load('current', {'packages':['corechart','table']});  // Carga los tipos de gráficos que vamos a usar
+
+ 
+     /* ESTO funcionaba antes de la llegada de Raul */ 
+      google.charts.setOnLoadCallback(drawChart);   // Hace una llamada cuando la API de Google este completamente cargada  TODO: Tendria sentido tener varias llamadas?
+      var arraydegraficos=[];
+
+      function drawChart() {  // función que crea y llena una Tabla de Datos, isnstancia el grafico, le paso los datos y lo dibuja.
+
+             var divgraficos = $("#divgraficos");
+             for (var i=0;i<graficos["graficos"].length;i++) {
+                   var d = document.createElement("div");
+                   d.className=graficos["graficos"][i]["ancho"]?graficos["graficos"][i]["ancho"] :"col-sm-3";
+                   divgraficos.append(d);
+                   var d2 = document.createElement("div");
+                   d2.className="thumbnail";
+                   d.append(d2);
+                   var d3 = document.createElement("h3");
+                   d2.append(d3);
+                   d3.innerHTML=graficos["graficos"][i]["titulo"];
+                   var d4 = document.createElement("div");
+                   d4.id="chart" + i;
+                   d4.className = "grafico-altura";
+                   d3.append(d4);
+                   d = document.createElement("p");
+                   d2.append(d);
+                   d.innerHTML="<strong>" + graficos["graficos"][i]["subtitulo"] + "</strong>";
+                   d = document.createElement("p");
+                   d2.append(d);
+                   d.innerHTML=graficos["graficos"][i]["descripcion"];
+              };
+
+
+        $.getJSON("http://opendata.gijon.es/descargar.php?id=572&tipo=CHART&siempre=S&p=01032017").done(function(datos) {
+
+            var data = new google.visualization.DataTable(datos);
+            for (var i=0;i<graficos["graficos"].length;i++) {
+                  if ((graficos["graficos"][i]["agrupar"] == undefined) || (graficos["graficos"][i]["agrupar"] == null)) 
+                        { var agrupada = data }
+                     else 
+                        { eval (graficos["graficos"][i]["agrupar"])};
+                                    
+                  //var agrupada = google.visualization.data.group(data, [1], [{'column': 2, 'aggregation': google.visualization.data.count, 'type': 'number'}]);
+                  var vista = new google.visualization.DataView(agrupada); 
+                  eval (graficos["graficos"][i]["filtrar"]);
+                  eval (graficos["graficos"][i]["columnas"]);
+                  //vista.setColumns([0,1]);
+                  //vista.setRows(vista.getFilteredRows([{column: 0, minValue: new Date(2007, 0, 1)},{column: 1, value: "Tarjeta Emtusa"}]));
+            
+                  
+                  //vista.setRows(vista.getFilteredRows([{column: 0, value: "Tarjeta Emtusa"}]));
+
+                  /*vista.setColumns([1,{calc:func_aux, type:'number', label:'Usos'}]); function func_aux(dataTable, rowNum){return Math.round(Math.random()*10);}*/
+
+                  eval("var chart = new google.visualization." + graficos["graficos"][i]["tipografica"] +"(document.getElementById('chart'+i));");
+                  
+                  if ((graficos["graficos"][i]["opciones"] == undefined) || (graficos["graficos"][i]["opciones"] == null)) 
+                        { var options = null; }
+                     else 
+                        { eval (graficos["graficos"][i]["opciones"])};
+                arraydegraficos.push({"chart":chart, "vista":vista, "opciones":options});
+                chart.draw(vista, options);
+              }
+            
+        });
+      }
+      $(window).resize(function () {
+        for (i=0; i<arraydegraficos.length; i++) {
+          arraydegraficos[i].chart.draw(arraydegraficos[i].vista,arraydegraficos[i].opciones);
+        }
+      })
+    </script>
+</head>
+
+
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="http://www.gijon.es"><img src="gijon_blanco.svg" height="130" /></a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#ciudadania">Ciudadanía</a></li>
+        <li><a href="#ciudad">Ciudad</a></li>
+        <li><a href="#Europa">Europa</a></li>
+        <li><a href="#Administración">Administración</a></li>
+        <li><a href="#Otros">Otros</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="jumbotron text-center">
+  <h1>Indicadores</h1> 
+  <p>Servicio de Comunicación y Nuevos Proyectos</p> 
+  <p>Año 2016</p> 
+</div>
+
+
+<div id="ciudadania" class="container-fluid text-center bg-grey">
+  <h2>Ciudadanía</h2>
+  <h4>Servicios de Comunicación con la Ciudadanía</h4>
+  <div class="row text-center " id="divgraficos">  <!-- slideanim -->
+  </div>
+  <h2>Ciudadanía</h2>
+  <h4>Servicios de Comunicación con la Ciudadanía</h4>
+    <div class="row text-center ">  <!-- slideanim -->
+    <div class="col-sm-6">
+      <div class="thumbnail">
+        <h2><strong>010</strong></h2>
+        <img src="chart.png" alt="010" width="400" height="300">
+       
+        <p>Llamadas recibidas cada mes</p>
+        <p> dsklf sdklfj lsdkfjlskdj flkdsj flksdj flkdsjf lksdjf lksdjf lksdjflksdj flksdjflskdjf lksdjf lksdj flksdj flksj f</p>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="thumbnail">
+        <div id="chart2" alt="Visitantes Web" width="400" height="300"></div>
+        <p><strong>Web</strong></p>
+        <p>Visitantes cada mes</p>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="thumbnail">
+          <div id="chart3" alt="Visitantes Web"></div>
+        <p><strong>Web</strong></p>
+        <p>Páginas vistas</p>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="thumbnail">
+        <img src="chart.png" alt="010" width="400" height="300">
+        <p><strong>Boletínes Electrónicos</strong></p>
+        <p>Número de Suscriptores</p>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="thumbnail">
+        <img src="chart2.png" alt="Visitantes Web" width="400" height="300">
+        <p><strong>Cita Previa</strong></p>
+        <p>Número de citas solicitadas</p>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Páginas Vistas Web" width="400" height="300">
+        <p><strong>Twitter</strong></p>
+        <p>Usuarios de Twitter</p>
+      </div>
+    </div>
+    </div>
+    <div class="row text-center slideanim">
+      <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Páginas Vistas Web" width="400" height="300">
+        <p><strong>Instagram</strong></p>
+        <p>Usuarios de Instagram</p>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+<div id="ciudad" class="container-fluid text-center ">
+  <h2>Ciudad</h2><br>
+  <h4>Servicios para la Ciudad</h4>
+  <div class="row text-center slideanim">  
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="010" width="400" height="300">
+        <p><strong>010</strong></p>
+        <p>Llamadas recibidas cada mes</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Visitantes Web" width="400" height="300">
+        <p><strong>Web</strong></p>
+        <p>Visitantes cada mes</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Páginas Vistas Web" width="400" height="300">
+        <p><strong>Web</strong></p>
+        <p>Páginas vistas</p>
+      </div>
+    </div>
+    </div>
+      <div class="row text-center slideanim">
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="010" width="400" height="300">
+        <p><strong>Boletínes Electrónicos</strong></p>
+        <p>Número de Suscriptores</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Visitantes Web" width="400" height="300">
+        <p><strong>Cita Previa</strong></p>
+        <p>Número de citas solicitadas</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Páginas Vistas Web" width="400" height="300">
+        <p><strong>Twitter</strong></p>
+        <p>Usuarios de Twitter</p>
+      </div>
+    </div>
+    </div>
+    <div class="row text-center slideanim">
+      <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Páginas Vistas Web" width="400" height="300">
+        <p><strong>Instagram</strong></p>
+        <p>Usuarios de Instagram</p>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+<div id="ciudadania" class="container-fluid">
+  <div class="row">
+    <div class="col-sm-8">
+      <h2>Ciudadanía</h2><br>
+      <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h4><br>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <br><button class="btn btn-default btn-lg">Get in Touch</button>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-signal logo"></span>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid bg-grey">
+  <div class="row">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-globe logo slideanim"></span>
+    </div>
+    <div class="col-sm-8">
+      <h2>Our Values</h2><br>
+      <h4><strong>MISSION:</strong> Our mission lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h4><br>
+      <p><strong>VISION:</strong> Our vision Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Container (Services Section) -->
+<div id="Ciudad" class="container-fluid text-center">
+  <h2>SERVICES</h2>
+  <h4>What we offer</h4>
+  <br>
+  <div class="row slideanim">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-off logo-small"></span>
+      <h4>POWER</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-heart logo-small"></span>
+      <h4>LOVE</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-lock logo-small"></span>
+      <h4>JOB DONE</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+  </div>
+  <br><br>
+  <div class="row slideanim">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-leaf logo-small"></span>
+      <h4>GREEN</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-certificate logo-small"></span>
+      <h4>CERTIFIED</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-wrench logo-small"></span>
+      <h4 style="color:#303030;">HARD WORK</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+  </div>
+</div>
+
+<!-- Container (Portfolio Section) -->
+<div id="Europa" class="container-fluid text-center bg-grey">
+  <h2>Portfolio</h2><br>
+  <h4>What we have created</h4>
+  <div class="row text-center slideanim">
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="Paris" width="400" height="300">
+        <p><strong>Paris</strong></p>
+        <p>Yes, we built Paris</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="New York" width="400" height="300">
+        <p><strong>New York</strong></p>
+        <p>We built New York</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="chart.png" alt="San Francisco" width="400" height="300">
+        <p><strong>San Francisco</strong></p>
+        <p>Yes, San Fran is ours</p>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  
+  <h2>What our customers say</h2>
+  <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <h4>"This company is the best. I am so happy with the result!"<br><span style="font-style:normal;">Michael Roe, Vice President, Comment Box</span></h4>
+      </div>
+      <div class="item">
+        <h4>"One word... WOW!!"<br><span style="font-style:normal;">John Doe, Salesman, Rep Inc</span></h4>
+      </div>
+      <div class="item">
+        <h4>"Could I... BE any more happy with this company?"<br><span style="font-style:normal;">Chandler Bing, Actor, FriendsAlot</span></h4>
+      </div>
+    </div>
+
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+
+<!-- Container (Pricing Section) -->
+<div id="Otros" class="container-fluid">
+  <div class="text-center">
+    <h2>Pricing</h2>
+    <h4>Choose a payment plan that works for you</h4>
+  </div>
+  <div class="row slideanim">
+    <div class="col-sm-4 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>Basic</h1>
+        </div>
+        <div class="panel-body">
+          <p><strong>20</strong> Lorem</p>
+          <p><strong>15</strong> Ipsum</p>
+          <p><strong>5</strong> Dolor</p>
+          <p><strong>2</strong> Sit</p>
+          <p><strong>Endless</strong> Amet</p>
+        </div>
+        <div class="panel-footer">
+          <h3>$19</h3>
+          <h4>per month</h4>
+          <button class="btn btn-lg">Sign Up</button>
+        </div>
+      </div>      
+    </div>     
+    <div class="col-sm-4 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>Pro</h1>
+        </div>
+        <div class="panel-body">
+          <p><strong>50</strong> Lorem</p>
+          <p><strong>25</strong> Ipsum</p>
+          <p><strong>10</strong> Dolor</p>
+          <p><strong>5</strong> Sit</p>
+          <p><strong>Endless</strong> Amet</p>
+        </div>
+        <div class="panel-footer">
+          <h3>$29</h3>
+          <h4>per month</h4>
+          <button class="btn btn-lg">Sign Up</button>
+        </div>
+      </div>      
+    </div>       
+    <div class="col-sm-4 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>Premium</h1>
+        </div>
+        <div class="panel-body">
+          <p><strong>100</strong> Lorem</p>
+          <p><strong>50</strong> Ipsum</p>
+          <p><strong>25</strong> Dolor</p>
+          <p><strong>10</strong> Sit</p>
+          <p><strong>Endless</strong> Amet</p>
+        </div>
+        <div class="panel-footer">
+          <h3>$49</h3>
+          <h4>per month</h4>
+          <button class="btn btn-lg">Sign Up</button>
+        </div>
+      </div>      
+    </div>    
+  </div>
+</div>
+
+<!-- Container (Contact Section) -->
+<div id="contact" class="container-fluid bg-grey">
+  <h2 class="text-center">CONTACT</h2>
+  <div class="row">
+    <div class="col-sm-5">
+      <p>Contact us and we'll get back to you within 24 hours.</p>
+      <p><span class="glyphicon glyphicon-map-marker"></span> Chicago, US</p>
+      <p><span class="glyphicon glyphicon-phone"></span> +00 1515151515</p>
+      <p><span class="glyphicon glyphicon-envelope"></span> myemail@something.com</p>
+    </div>
+    <div class="col-sm-7 slideanim">
+      <div class="row">
+        <div class="col-sm-6 form-group">
+          <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+        </div>
+        <div class="col-sm-6 form-group">
+          <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+        </div>
+      </div>
+      <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5"></textarea><br>
+      <div class="row">
+        <div class="col-sm-12 form-group">
+          <button class="btn btn-default pull-right" type="submit">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <a href="#myPage" title="To Top">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+  </a>
+  <p>Datos extraídos del <a href="http://datos.gijon.es" title="Web Datos Abiertos">Portal de Datos Abiertos</a><br>
+  Ayuntamiento de Gijón<br>2017</p>
+ </footer>
+
+</body>
+</html>
