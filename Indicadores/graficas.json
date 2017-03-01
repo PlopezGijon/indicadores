@@ -1,0 +1,119 @@
+var graficos = {"graficos": [
+
+/*Todas las opciones se pueden encontrar en https://developers.google.com/chart/interactive/docs/gallery/linechart#configuration-options */	
+/* Ejemplo con todas las funcionalidades y campos rellenos 
+	{
+		"titulo":"010",
+		"subtitulo":"Llamadas recibidas",
+		"descripcion":"dlkfjsdlk fjlskd jfslkdjf lsk",
+		"url":"http://opendata.gijon.es/descargar.php?id=571&tipo=CHART",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [1], [{'column': 2, 'aggregation': google.visualization.data.count, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([0,1]);",
+		"filtrar":"vista.setRows(vista.getFilteredRows([{column: 0, value: \"Tarjeta Emtusa\"}]));",
+		"tipografica":"Table",
+		"opciones": "var options = {width: '100%', height: '100%',title: 'titulo', colors: ['#6E2C6B', '#9B1889', '#D12DB1', '#6E2C6B', '#9B1889'],	mode:'edit', is3D:true, legend: 'none'}", 
+	},
+*/
+    {
+		"titulo":"TABLE",
+		"subtitulo":"Datos en Bruto",
+		"descripcion":"Vale para validar los datos que devuelve el conjunto de datos abiertos",
+		"tipografica":"Table",
+		"opciones": "var options = {allowHtml: true, width: '95%', colors: ['#6E2C6B', '#9B1889', '#D12DB1']}",
+		"ancho": "col-sm-10"
+	},
+	{
+		"titulo":"Usos",
+		"subtitulo":"Usos por meses de todo junto",
+		"descripcion":"No vale para mucho, mezcla de todo un poco sdflj dslkfj dslkfj sdklfj sdkljf ldskjf ldskjf lksdjf lksdj fklsdjf lksdj flksdj flksdj flksdj flksdj flks",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [1], [{'column': 5, 'aggregation': google.visualization.data.avg, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([0,1]);",
+		"tipografica":"ColumnChart",
+		"opciones": "var options = {colors: ['#6E2C6B', '#9B1889', '#D12DB1'], is3D:true, legend: 'none', vAxis: { format: 'short'}}",
+		"ancho": "col-sm-2"
+	},
+		{
+		"titulo":"030",
+		"subtitulo":"Llamadas recibidas",
+		"descripcion":"dlkfjsdlk fjlskd jfslkdjf lsk",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [0,1], [{'column': 5, 'aggregation': google.visualization.data.sum, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([1,2]);",
+		"tipografica":"PieChart",
+		"opciones": "var options = {colors: ['#6E2C6B', '#9B1889', '#D12DB1', '#009B3A', '#34B233', '#7AB800', '#D2492A', '#FF5800', '#FFA100', '#007AC9', '#0088CE', '#00A9C9'], mode:'edit', is3D:true}", 
+		"ancho": "col-sm-4"
+	},
+		{
+		"titulo":"040",
+		"subtitulo":"Número de Quejas Recibidas",
+		"descripcion":"dsfkl sjdfklsd jflkdsj fl",
+		"columnas":"vista.setColumns([1,0,5]);",
+		"tipografica":"BubbleChart",
+		"opciones": "var options = {colors: ['#6E2C6B', '#9B1889', '#D12DB1'], is3D:true, legend: 'none', bar: {groupWidth: '120%'}, isStacked: true, hAxis: { format: 'short', gridlines: { count: 4 } }}",
+		"ancho": "col-sm-4"
+	},
+		{
+		"titulo":"050",
+		"subtitulo":"Llamadas recibidas",
+		"descripcion":"dlkfjsdlk fjlskd jfslkdjf lsk",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [1], [{'column': 5, 'aggregation': google.visualization.data.sum, 'type': 'number'}]);",
+		//"columnas":"vista.setColumns([0,1]);",
+		//"filtrar":"vista.setRows(vista.getFilteredRows([{column: 0, value: 'Tarjeta Emtusa'}]));",
+		"opciones": "var options = {pieHole: 0.4, colors: ['#6E2C6B', '#9B1889', '#D12DB1', '#009B3A', '#34B233', '#7AB800', '#D2492A', '#FF5800', '#FFA100', '#007AC9', '#0088CE', '#00A9C9'], mode:'edit'}", 
+		"tipografica":"PieChart",
+		"ancho": "col-sm-4",
+
+},
+	
+	{
+		"titulo":"Tarjeta Ciudadana",
+		"subtitulo":"Viajes en BUS con TC",
+		"descripcion":"Número de viajes realizados por meses usando como medio de pago la Tarjeta Ciudadana",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [0], [{'column': 5, 'aggregation': google.visualization.data.sum, 'type': 'number'}]);",
+		//"filtrar":"vista.setRows(vista.getFilteredRows([{column: 1, value: 'TC'},{column: 2, value: 'Tarjeta Transporte'}]));",
+		//"filtrar":"vista.setRows(view.getFilteredRows([{column: 1, minValue: 20150000}]));",
+
+		"columnas":"vista.setColumns([0,1]);",
+		"tipografica":"AreaChart",
+		"opciones": "var options = {colors: ['#6E2C6B', '#9B1889', '#D12DB1'], legend: 'none'}", // , bar: {groupWidth: '90%'}, vAxis: { format: 'decimal', gridlines: { count: 10 } }}",
+		"ancho": "col-sm-12",
+	},
+	{
+		"titulo":"Histogram",
+		"subtitulo":"Usos por meses de todo junto",
+		"descripcion":"No vale para mucho, mezcla de todo un poco",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [1], [{'column': 5, 'aggregation': google.visualization.data.avg, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([0,1]);",
+		"tipografica":"Histogram",
+		"opciones": "var options = {colors: ['#6E2C6B', '#9B1889', '#D12DB1'], is3D:true, legend: 'none', hAxis: { format: 'short'}}",
+	},
+	{
+		"titulo":"LineChart",
+		"subtitulo":"Usos por meses de todo junto",
+		"descripcion":"No vale para mucho, mezcla de todo un poco",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [1], [{'column': 5, 'aggregation': google.visualization.data.avg, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([0,1]);",
+		"tipografica":"LineChart",
+		"opciones": "var options = {animation:{duration: 1000, easing: 'out'},colors: ['#6E2C6B', '#9B1889', '#D12DB1'], curveType:'function', lineWidth: 8, legend: 'none', vAxis: { format: 'short'}}",
+		"ancho": "col-sm-12",
+	},
+	{
+		"titulo":"SteppedAreaChart",
+		"subtitulo":"Usos por meses de todo junto",
+		"descripcion":"No vale para mucho, mezcla de todo un poco",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [1], [{'column': 5, 'aggregation': google.visualization.data.avg, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([0,1]);",
+		"tipografica":"SteppedAreaChart",
+		"opciones": "var options = {colors: ['#6E2C6B', '#9B1889', '#D12DB1'], legend: 'none', vAxis: { format: 'short'}}",
+		"ancho": "col-sm-12",
+	},
+		{
+		"titulo":"ScatterChart",
+		"subtitulo":"Con línea de tendencia",
+		"descripcion":"Se puede hacer linea continua, exponencial o que siga los puntos especificando un grado",
+		"agrupar":"var agrupada = google.visualization.data.group(data, [0], [{'column': 5, 'aggregation': google.visualization.data.avg, 'type': 'number'}]);",
+		"columnas":"vista.setColumns([0,1]);",
+		"tipografica":"ScatterChart",
+		"opciones": "var options = {trendlines: {0:{type:'polynomial', degree: 3}}, colors: ['#6E2C6B', '#9B1889', '#D12DB1'], legend: 'none', vAxis: { format: 'short'}}",
+		"ancho": "col-sm-12",
+	},
+]};
