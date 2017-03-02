@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Cuadro de Mando del Servicio de Comunicación y Nuevos Proyectos</title>
+  <title>Indicadores del Servicio de Comunicación y Nuevos Proyectos</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
@@ -24,60 +24,84 @@
       google.charts.setOnLoadCallback(drawChart);   // Hace una llamada cuando la API de Google este completamente cargada  TODO: Tendria sentido tener varias llamadas?
       var arraydegraficos=[];
 
-      function drawChart() {  // función que crea y llena una Tabla de Datos, isnstancia el grafico, le paso los datos y lo dibuja.
+        var fechahoy = new Date();
+        var dia = ("0"+ fechahoy.getDate()).substr(-2);
+        var mes = ("0"+ (fechahoy.getMonth() + 1)).substr(-2);
+        var ano = fechahoy.getFullYear();
+        
+        var anotrabajo = ano;
+        anotrabajo = getUrlParameter("a") || ano;
+        var ParamGraficos = [];
+
+        $(document).ready (function () {
+        	 $("#ano").html(anotrabajo);
 
              var divgraficos = $("#divgraficos");
-             for (var i=0;i<graficos["graficos"].length;i++) {
-                   var d = document.createElement("div");
-                   d.className=graficos["graficos"][i]["ancho"]?graficos["graficos"][i]["ancho"] :"col-sm-3";
-                   divgraficos.append(d);
-                   var d2 = document.createElement("div");
-                   d2.className="thumbnail";
-                   d.append(d2);
-                   var d3 = document.createElement("h3");
-                   d2.append(d3);
-                   d3.innerHTML=graficos["graficos"][i]["titulo"];
-                   var d4 = document.createElement("div");
-                   d4.id="chart" + i;
-                   d4.className = "grafico-altura";
-                   d3.append(d4);
-                   d = document.createElement("p");
-                   d2.append(d);
-                   d.innerHTML="<strong>" + graficos["graficos"][i]["subtitulo"] + "</strong>";
-                   d = document.createElement("p");
-                   d2.append(d);
-                   d.innerHTML=graficos["graficos"][i]["descripcion"];
-              };
 
+             var num_graficos = 0;
 
-        $.getJSON("http://opendata.gijon.es/descargar.php?id=572&tipo=CHART&siempre=S&p=01032017").done(function(datos) {
+             for (var k=0;k<graficos["categorias"].length;k++) {
+             	var categoria = graficos["categorias"][k];
+             	for (var j=0;j<categoria["proyectos"].length;j++) {    
+             		var proyecto = categoria["proyectos"][j];
+             		if (proyecto["titulo"] == getUrlParameter("p") || getUrlParameter("p")==undefined) {
+	             		for (var i=0;i<proyecto["graficos"].length;i++) {
+	             			var grafi = proyecto["graficos"][i];
+	             			ParamGraficos.push(grafi);
+	                   		var d = document.createElement("div");
+	                   		d.className=grafi["ancho"]?grafi["ancho"] :"col-sm-3";
+	                   		divgraficos.append(d);
+	                   		var d2 = document.createElement("div");
+	                   		d2.className="thumbnail";
+	                   		d.append(d2);
+	                   		var d3 = document.createElement("h3");
+	                   		d2.append(d3);
+	                   		d3.innerHTML=grafi["titulo"];
+	                   		var d4 = document.createElement("div");
+	                   		d4.id="chart" + num_graficos++;
+	                   		d4.className = "grafico-altura";
+	                   		d3.append(d4);
+	                   		d = document.createElement("p");
+	                   		d2.append(d);
+	                   		d.innerHTML="<strong>" + grafi["subtitulo"] + "</strong>";
+	                   		d = document.createElement("p");
+	                   		d2.append(d);
+	                   		d.innerHTML=grafi["descripcion"];
+	              		};
+              		}
+          		};
+      		};
 
-            var data = new google.visualization.DataTable(datos);
-            for (var i=0;i<graficos["graficos"].length;i++) {
-                  if ((graficos["graficos"][i]["agrupar"] == undefined) || (graficos["graficos"][i]["agrupar"] == null)) 
+		});
+
+  function drawChart() {  // función que crea y llena una Tabla de Datos, isnstancia el grafico, le paso los datos y lo dibuja.
+
+        $.getJSON("http://opendata.gijon.es/descargar.php?id="+ (graficos["Datasets"][anotrabajo]||graficos["Datasets"][ano])+"&tipo=CHART&p=" + dia + mes + ano).done(function(datos) {
+        	var data = new google.visualization.DataTable(datos);
+        	var vistaaux = new google.visualization.DataView(data); 
+        	anotrabajo = parseInt(anotrabajo);
+        	vistaaux.setRows(vistaaux.getFilteredRows([{column: 0, minValue: anotrabajo*10000, maxValue: (anotrabajo+1)*10000}]));
+        	//vistaaux.setColumns([1,2,3,4,5]);
+        	data = vistaaux;
+            
+        	for (var i=0;i<ParamGraficos.length;i++) {
+                  var c = new Date().getTime()
+                  if ((ParamGraficos[i]["agrupar"] == undefined) || (ParamGraficos[i]["agrupar"] == null)) 
                         { var agrupada = data }
                      else 
-                        { eval (graficos["graficos"][i]["agrupar"])};
+                        { eval (ParamGraficos[i]["agrupar"])};
                                     
-                  //var agrupada = google.visualization.data.group(data, [1], [{'column': 2, 'aggregation': google.visualization.data.count, 'type': 'number'}]);
                   var vista = new google.visualization.DataView(agrupada); 
-                  eval (graficos["graficos"][i]["filtrar"]);
-                  eval (graficos["graficos"][i]["columnas"]);
-                  //vista.setColumns([0,1]);
-                  //vista.setRows(vista.getFilteredRows([{column: 0, minValue: new Date(2007, 0, 1)},{column: 1, value: "Tarjeta Emtusa"}]));
-            
+                  eval (ParamGraficos[i]["filtrar"]);
+                  eval (ParamGraficos[i]["columnas"]);
+                  eval("var chart = new google.visualization." + ParamGraficos[i]["tipografica"] +"(document.getElementById('chart'+i));");
                   
-                  //vista.setRows(vista.getFilteredRows([{column: 0, value: "Tarjeta Emtusa"}]));
-
-                  /*vista.setColumns([1,{calc:func_aux, type:'number', label:'Usos'}]); function func_aux(dataTable, rowNum){return Math.round(Math.random()*10);}*/
-
-                  eval("var chart = new google.visualization." + graficos["graficos"][i]["tipografica"] +"(document.getElementById('chart'+i));");
-                  
-                  if ((graficos["graficos"][i]["opciones"] == undefined) || (graficos["graficos"][i]["opciones"] == null)) 
+                  if ((ParamGraficos[i]["opciones"] == undefined) || (ParamGraficos[i]["opciones"] == null)) 
                         { var options = null; }
                      else 
-                        { eval (graficos["graficos"][i]["opciones"])};
-                arraydegraficos.push({"chart":chart, "vista":vista, "opciones":options});
+                        { eval (ParamGraficos[i]["opciones"])};
+                arraydegraficos.push({"chart":chart, "vista":vista, "opciones":options});  //Para poder redimensionar las graficas.
+                console.log("Tiempo: Grafico "+ i +":   " + (new Date().getTime()-c) + " milisegundos");
                 chart.draw(vista, options);
               }
             
@@ -120,7 +144,7 @@
 <div class="jumbotron text-center">
   <h1>Indicadores</h1> 
   <p>Servicio de Comunicación y Nuevos Proyectos</p> 
-  <p>Año 2016</p> 
+  <p>Año <span id="ano"></span></p> 
 </div>
 
 
