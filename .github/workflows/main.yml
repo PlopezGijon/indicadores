@@ -15,3 +15,4 @@ jobs:
         username: ubuntu
         password: ${{ secrets.ftp_password }}
         protocol: ftps
+        port: 990 
