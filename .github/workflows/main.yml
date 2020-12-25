@@ -1,5 +1,5 @@
 on: push
-name: Subida automatica FTP
+name: Subida automática FTP
 jobs:
   web-deploy:
     name: 🎉 Deploy
@@ -13,4 +13,5 @@ jobs:
       with:
         server: 51.68.228.246
         username: ubuntu
-        password: Mt5NJTR4wPPu
+        password: ${{ secrets.ftp_password }}
+        protocol: sftp 
