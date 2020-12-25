@@ -1,5 +1,5 @@
 on: push
-name: Subida automática FTP
+name: Subida automática al FTP de OVH
 jobs:
   web-deploy:
     name: 🎉 Deploy
